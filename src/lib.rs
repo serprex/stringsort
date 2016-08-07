@@ -1,3 +1,7 @@
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
+use std::hash::{BuildHasherDefault, Hasher};
+
 pub fn insertsort(s: &str) -> String {
     let mut st = String::with_capacity(s.len());
     let mut si = s.chars().into_iter();
@@ -17,6 +21,27 @@ pub fn insertsort(s: &str) -> String {
             st.insert(idx, ch)
         } else {
             st.push(ch)
+        }
+    }
+    st
+}
+
+pub fn countsort<HB>(s: &str) -> String
+    where HB: Hasher + Default
+{
+    let mut buckets = HashMap::<char, usize, BuildHasherDefault<HB>>::default();
+    for ch in s.chars() {
+        match buckets.entry(ch) {
+            Entry::Vacant(count) => {count.insert(1);},
+            Entry::Occupied(mut count) => *count.get_mut() += 1,
+        }
+    }
+    let mut st = String::with_capacity(s.len());
+    let mut keys = buckets.keys().map(|&k| k).collect::<Vec<_>>();
+    keys.sort();
+    for key in keys {
+        for _ in 0..buckets[&key] {
+            st.push(key)
         }
     }
     st
@@ -87,8 +112,9 @@ pub fn vecsort(s: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::{Duration, Instant};
     use std::cmp;
+    use std::hash::SipHasher;
+    use std::time::{Duration, Instant};
     fn teststr1<F>(s: &str, f: F) -> (String, Duration)
         where F: Fn(&str) -> String
     {
@@ -101,12 +127,14 @@ mod tests {
         let (countins, countinsdur) = teststr1(s, countsort_insert);
         let (countvec, countvecdur) = teststr1(s, countsort_vec);
         let (insert, insertdur) = teststr1(s, insertsort);
+        let (count, countdur) = teststr1(s, countsort::<SipHasher>);
         let (vec, vecdur) = teststr1(s, vecsort);
         assert!(countins == vec);
         assert!(countvec == vec);
         assert!(insert == vec);
+        assert!(count == vec);
         if s.len() != 64 {
-            assert!(cmp::min(cmp::min(countinsdur, countvecdur), insertdur) <= vecdur);
+            assert!(cmp::min(cmp::min(cmp::min(countinsdur, countvecdur), insertdur), countdur) <= vecdur);
         }
     }
 
