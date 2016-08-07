@@ -2,9 +2,10 @@ Sort characters of a string (eg asdf => adfs). Exposes 3 methods, all taking an 
 
 vecsort: Converts arg into Vec, sorts Vec, converts Vec to String
 insertsort: Builds a string by employing linear insert sort on each character
-bucketsort: Builds a string by counting the occurences for all ascii characters,
-	building up a sorted string of non ascii characters with insert sort,
-	then generates a string based off counts of ascii characters & appends non ascii
+countsort_insert: Builds a string by counting the occurences for all ascii characters,
+	building up a sorted string of nonascii characters with insert sort,
+	then generates a string based off counts of ascii characters & appends nonascii
+countsort_vec: Similar to countsort_insert, but buffers nonascii as a vector to sort afterwards
 
 insertsort is good for very small strings, bucketsort is good if you expect mostly ascii, vecsort is the only one that isn't worst case quadratic
 NB bucketsort is O(N) for ascii strings
