@@ -113,7 +113,7 @@ pub fn vecsort(s: &str) -> String {
 mod tests {
     use super::*;
     use std::cmp;
-    use std::hash::SipHasher;
+    use std::collections::hash_map::DefaultHasher;
     use std::time::{Duration, Instant};
     fn teststr1<F>(s: &str, f: F) -> (String, Duration)
         where F: Fn(&str) -> String
@@ -127,7 +127,7 @@ mod tests {
         let (countins, countinsdur) = teststr1(s, countsort_insert);
         let (countvec, countvecdur) = teststr1(s, countsort_vec);
         let (insert, insertdur) = teststr1(s, insertsort);
-        let (count, countdur) = teststr1(s, countsort::<SipHasher>);
+        let (count, countdur) = teststr1(s, countsort::<DefaultHasher>);
         let (vec, vecdur) = teststr1(s, vecsort);
         assert!(countins == vec);
         assert!(countvec == vec);
