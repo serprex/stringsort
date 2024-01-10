@@ -2,7 +2,7 @@
 name = "stringsort"
 description = "Pathological sorting of string characters"
 readme = "readme"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["serprex"]
 repository = "https://github.com/serprex/stringsort"
 license = "MIT/Apache-2.0"
